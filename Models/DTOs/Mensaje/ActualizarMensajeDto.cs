@@ -1,5 +1,6 @@
 ﻿namespace ejemplov1.Models.DTOs.Mensaje
 {
+    // ***** Sin Usar *****
     public class ActualizarMensajeDto
     {
         public string Cuerpo { get; set; }

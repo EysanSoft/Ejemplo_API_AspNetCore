@@ -54,7 +54,7 @@ namespace ejemplov1.Controllers
         }
 
         // READ.
-        [HttpGet, Route("obtener_usuarios")]
+        [HttpGet, Route("obtener_usuarios"), Authorize]
         public ActionResult Read ()
         {
             string storedProcedure = "ObtenerUsuarios";
@@ -90,7 +90,7 @@ namespace ejemplov1.Controllers
         }
 
         // READ.
-        [HttpGet, Route("obtener_usuario/{id}")]
+        [HttpGet, Route("obtener_usuario/{id}"), Authorize]
         public ActionResult Read (int id)
         {
             string storedProcedure = "ObtenerUsuario";
@@ -129,7 +129,7 @@ namespace ejemplov1.Controllers
         }
 
         // UPDATE.
-        [HttpPut, Route("actualizar_usuario/{id}")]
+        [HttpPut, Route("actualizar_usuario/{id}"), Authorize]
         public ActionResult Update (ActualizarUsuarioDto usuario, int id)
         {
             string storedProcedure = "ActualizarUsuario";
@@ -169,7 +169,7 @@ namespace ejemplov1.Controllers
         }
 
         // DELETE.
-        [HttpDelete, Route("eliminar_usuario/{id}")]
+        [HttpDelete, Route("eliminar_usuario/{id}"), Authorize]
         public ActionResult Delete (int id)
         {
             string storedProcedure = "EliminarUsuario";

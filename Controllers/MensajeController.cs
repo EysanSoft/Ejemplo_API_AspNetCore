@@ -1,7 +1,9 @@
 ﻿using ejemplo_api.Models.DTOs.Mensaje;
 using ejemplov1.Models;
+// ***** Sin Usar *****
 using ejemplov1.Models.DTOs.Mensaje;
 using ejemplov1.Resources;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
@@ -13,7 +15,7 @@ namespace ejemplov1.Controllers
     public class MensajeController : Controller
     {
         // CREATE.
-        [HttpPost, Route("crear_mensaje")]
+        [HttpPost, Route("crear_mensaje"), Authorize]
         public ActionResult Create(CrearMensajeDTO mensaje)
         {
             string storedProcedure = "CrearMensaje";
@@ -51,7 +53,7 @@ namespace ejemplov1.Controllers
         }
 
         // READ.
-        [HttpGet, Route("obtener_mensajes")]
+        [HttpGet, Route("obtener_mensajes"), Authorize]
         public ActionResult Read()
         {
             string storedProcedure = "ObtenerMensajes";
@@ -86,7 +88,7 @@ namespace ejemplov1.Controllers
             }
         }
 
-        // READ.
+        // READ. **** Sin Usar ****
         [HttpGet, Route("obtener_mensaje/{id}")]
         public ActionResult Read(int id)
         {
@@ -107,7 +109,7 @@ namespace ejemplov1.Controllers
                 if (data.Rows.Count > 0)
                 {
                     var mensaje = JsonConvert.SerializeObject(data);
-                    return StatusCode(200, new { success = true, data = JsonConvert.DeserializeObject<List<Models.Mensaje>>(mensaje) });
+                    return StatusCode(200, new { success = true, data = JsonConvert.DeserializeObject<List<Mensaje>>(mensaje) });
                 }
                 else
                 {
@@ -125,7 +127,7 @@ namespace ejemplov1.Controllers
             }
         }
 
-        // UPDATE. *** Sin Usar ***
+        // UPDATE. **** Sin Usar ****
         [HttpPut, Route("actualizar_mensaje/{id}")]
         public ActionResult Update(ActualizarMensajeDto mensaje, int id)
         {
@@ -164,7 +166,7 @@ namespace ejemplov1.Controllers
         }
 
         // DELETE.
-        [HttpDelete, Route("eliminar_mensaje/{id}")]
+        [HttpDelete, Route("eliminar_mensaje/{id}"), Authorize]
         public ActionResult Delete(int id)
         {
             string storedProcedure = "EliminarMensaje";

@@ -1,6 +1,7 @@
 ﻿using ejemplov1.Models;
 using ejemplov1.Models.DTOs.Cliente;
 using ejemplov1.Resources;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
@@ -12,7 +13,7 @@ namespace ejemplov1.Controllers
     public class ClienteController : Controller
     {
         // CREATE.
-        [HttpPost, Route("crear_cliente")]
+        [HttpPost, Route("crear_cliente"), Authorize]
         public ActionResult Create(Cliente cliente)
         {
             string storedProcedure = "CrearCliente";
@@ -50,7 +51,7 @@ namespace ejemplov1.Controllers
         }
 
         // READ.
-        [HttpGet, Route("obtener_clientes")]
+        [HttpGet, Route("obtener_clientes"), Authorize]
         public ActionResult Read()
         {
             string storedProcedure = "ObtenerClientes";
@@ -86,7 +87,7 @@ namespace ejemplov1.Controllers
         }
 
         // READ.
-        [HttpGet, Route("obtener_cliente/{id}")]
+        [HttpGet, Route("obtener_cliente/{id}"), Authorize]
         public ActionResult Read(int id)
         {
             string storedProcedure = "ObtenerCliente";
@@ -125,7 +126,7 @@ namespace ejemplov1.Controllers
         }
 
         // UPDATE.
-        [HttpPut, Route("actualizar_cliente/{id}")]
+        [HttpPut, Route("actualizar_cliente/{id}"), Authorize]
         public ActionResult Update(ActualizarClienteDto cliente, int id)
         {
             string storedProcedure = "ActualizarCliente";
@@ -165,7 +166,7 @@ namespace ejemplov1.Controllers
         }
 
         // DELETE.
-        [HttpDelete, Route("eliminar_cliente/{id}")]
+        [HttpDelete, Route("eliminar_cliente/{id}"), Authorize]
         public ActionResult Delete(int id)
         {
             string storedProcedure = "EliminarCliente";
