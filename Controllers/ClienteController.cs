@@ -125,7 +125,7 @@ namespace ejemplov1.Controllers
         }
 
         // UPDATE.
-        [HttpPatch, Route("actualizar_cliente/{id}")]
+        [HttpPut, Route("actualizar_cliente/{id}")]
         public ActionResult Update(ActualizarClienteDto cliente, int id)
         {
             string storedProcedure = "ActualizarCliente";

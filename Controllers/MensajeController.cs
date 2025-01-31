@@ -1,4 +1,5 @@
-﻿using ejemplov1.Models;
+﻿using ejemplo_api.Models.DTOs.Mensaje;
+using ejemplov1.Models;
 using ejemplov1.Models.DTOs.Mensaje;
 using ejemplov1.Resources;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +14,7 @@ namespace ejemplov1.Controllers
     {
         // CREATE.
         [HttpPost, Route("crear_mensaje")]
-        public ActionResult Create(Mensaje mensaje)
+        public ActionResult Create(CrearMensajeDTO mensaje)
         {
             string storedProcedure = "CrearMensaje";
 
@@ -29,6 +30,8 @@ namespace ejemplov1.Controllers
                 command.Parameters["@tipo"].Value = mensaje.Tipo;
                 command.Parameters.Add("@status", SqlDbType.NVarChar);
                 command.Parameters["@status"].Value = mensaje.Status;
+                command.Parameters.Add("@clienteId", SqlDbType.Int);
+                command.Parameters["@clienteId"].Value = mensaje.ClienteId;
                 int result = command.ExecuteNonQuery();
 
                 if (result > 0)
@@ -65,7 +68,7 @@ namespace ejemplov1.Controllers
                 if (data.Rows.Count > 0)
                 {
                     var mensajes = JsonConvert.SerializeObject(data);
-                    return StatusCode(200, new { success = true, data = JsonConvert.DeserializeObject<List<Models.Mensaje>>(mensajes) });
+                    return StatusCode(200, new { success = true, data = JsonConvert.DeserializeObject<List<Mensaje>>(mensajes) });
                 }
                 else
                 {
@@ -122,8 +125,8 @@ namespace ejemplov1.Controllers
             }
         }
 
-        // UPDATE.
-        [HttpPatch, Route("actualizar_mensaje/{id}")]
+        // UPDATE. *** Sin Usar ***
+        [HttpPut, Route("actualizar_mensaje/{id}")]
         public ActionResult Update(ActualizarMensajeDto mensaje, int id)
         {
             string storedProcedure = "ActualizarMensaje";

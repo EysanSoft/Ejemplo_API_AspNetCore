@@ -1,6 +1,7 @@
 ﻿using ejemplov1.Models;
 using ejemplov1.Models.DTOs.Usuario;
 using ejemplov1.Resources;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
@@ -12,7 +13,7 @@ namespace ejemplov1.Controllers
     public class UsuarioController : Controller
     {
         // CREATE.
-        [HttpPost, Route("crear_usuario")]
+        [HttpPost, Route("crear_usuario"), Authorize]
         public ActionResult Create (Usuario usuario)
         {
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(usuario.Contrasena);
@@ -128,7 +129,7 @@ namespace ejemplov1.Controllers
         }
 
         // UPDATE.
-        [HttpPatch, Route("actualizar_usuario/{id}")]
+        [HttpPut, Route("actualizar_usuario/{id}")]
         public ActionResult Update (ActualizarUsuarioDto usuario, int id)
         {
             string storedProcedure = "ActualizarUsuario";
