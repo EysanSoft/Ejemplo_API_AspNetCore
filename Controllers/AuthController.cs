@@ -79,13 +79,13 @@ namespace ejemplo_api.Controllers
                         return StatusCode(200, new
                         {
                             success = false,
-                            message = "Correo o contraseña incorrectas."
+                            message = "Contraseña Incorrecta."
                         });
                     }
                 }
                 else
                 {
-                    return StatusCode(200, new { success = false, message = "No se encontró información." });
+                    return StatusCode(200, new { success = false, message = "Correo incorrecto, no se encontró al usuario." });
                 }
             }
             catch (Exception)
