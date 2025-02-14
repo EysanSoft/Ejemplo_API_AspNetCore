@@ -1,7 +1,5 @@
 ﻿using ejemplo_api.Models.DTOs.Mensaje;
 using ejemplov1.Models;
-// ***** Sin Usar *****
-using ejemplov1.Models.DTOs.Mensaje;
 using ejemplov1.Resources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +14,7 @@ namespace ejemplov1.Controllers
     {
         // CREATE.
         [HttpPost, Route("crear_mensaje"), Authorize]
-        public ActionResult Create(CrearMensajeDTO mensaje)
+        public ActionResult Create(CrearMensajeDto mensaje)
         {
             string storedProcedure = "CrearMensaje";
 
@@ -28,6 +26,8 @@ namespace ejemplov1.Controllers
                 command.CommandType = System.Data.CommandType.StoredProcedure;
                 command.Parameters.Add("@cuerpo", SqlDbType.NVarChar);
                 command.Parameters["@cuerpo"].Value = mensaje.Cuerpo;
+                command.Parameters.Add("@contacto", SqlDbType.NVarChar);
+                command.Parameters["@contacto"].Value = mensaje.Contacto;
                 command.Parameters.Add("@tipo", SqlDbType.NVarChar);
                 command.Parameters["@tipo"].Value = mensaje.Tipo;
                 command.Parameters.Add("@status", SqlDbType.NVarChar);
@@ -88,37 +88,34 @@ namespace ejemplov1.Controllers
             }
         }
 
-        // READ. **** Sin Usar ****
-        [HttpGet, Route("obtener_mensaje/{id}")]
-        public ActionResult Read(int id)
+        // READ.
+        [HttpGet, Route("obtener_tipos"), Authorize]
+        public ActionResult ReadTipos()
         {
-            string storedProcedure = "ObtenerMensaje";
-
+            string storedProcedure = "ObtenerTipos";
             SqlConnection connection = new SqlConnection(Connection.GetConnection());
             try
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(storedProcedure, connection);
                 command.CommandType = System.Data.CommandType.StoredProcedure;
-                command.Parameters.Add("@id", SqlDbType.Int);
-                command.Parameters["@id"].Value = id;
                 DataTable data = new DataTable();
                 SqlDataAdapter adapter = new SqlDataAdapter(command);
                 adapter.Fill(data);
 
                 if (data.Rows.Count > 0)
                 {
-                    var mensaje = JsonConvert.SerializeObject(data);
-                    return StatusCode(200, new { success = true, data = JsonConvert.DeserializeObject<List<Mensaje>>(mensaje) });
+                    var tipos_mensajes = JsonConvert.SerializeObject(data);
+                    return StatusCode(200, new { success = true, data = JsonConvert.DeserializeObject<List<ObtenerTiposDto>>(tipos_mensajes) });
                 }
                 else
                 {
-                    return StatusCode(200, new { success = false, message = "No se encontró el mensaje." });
+                    return StatusCode(200, new { success = false, message = "No se encontró ningún registro." });
                 }
             }
             catch (Exception)
             {
-                return StatusCode(500, new { success = false, error = true, message = "Error al editar el mensaje." });
+                return StatusCode(500, new { success = false, error = true, message = "Error al obtener los registros." });
             }
             finally
             {
@@ -127,36 +124,38 @@ namespace ejemplov1.Controllers
             }
         }
 
-        // UPDATE. **** Sin Usar ****
-        [HttpPut, Route("actualizar_mensaje/{id}")]
-        public ActionResult Update(ActualizarMensajeDto mensaje, int id)
+        // READ.
+        [HttpGet, Route("obtener_conteo_semanal"), Authorize]
+        public ActionResult ReadSemanal(RangoEntreFechas fecha)
         {
-            string storedProcedure = "ActualizarMensaje";
-
+            string storedProcedure = "ObtenerConteoSemanalMensajes";
             SqlConnection connection = new SqlConnection(Connection.GetConnection());
             try
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(storedProcedure, connection);
                 command.CommandType = System.Data.CommandType.StoredProcedure;
-                command.Parameters.Add("@id", SqlDbType.Int);
-                command.Parameters["@id"].Value = id;
-                command.Parameters.Add("@cuerpo", SqlDbType.NVarChar);
-                command.Parameters["@cuerpo"].Value = mensaje.Cuerpo;
-                command.Parameters.Add("@tipo", SqlDbType.NVarChar);
-                command.Parameters["@tipo"].Value = mensaje.Tipo;
-                command.Parameters.Add("@status", SqlDbType.NVarChar);
-                command.Parameters["@status"].Value = mensaje.Status;
-                int result = command.ExecuteNonQuery();
+                command.Parameters.Add("@fechaInicial", SqlDbType.NVarChar);
+                command.Parameters["@fechaInicial"].Value = fecha.Inicial;
+                command.Parameters.Add("@fechaFinal", SqlDbType.NVarChar);
+                command.Parameters["@fechaFinal"].Value = fecha.Final;
+                DataTable data = new DataTable();
+                SqlDataAdapter adapter = new SqlDataAdapter(command);
+                adapter.Fill(data);
 
-                if (result > 0)
-                    return StatusCode(200, new { success = true, message = "El mensaje fue editado." });
+                if (data.Rows.Count > 0)
+                {
+                    var mensajes_semanales = JsonConvert.SerializeObject(data);
+                    return StatusCode(200, new { success = true, data = JsonConvert.DeserializeObject<List<ObtenerTiposDto>>(mensajes_semanales) });
+                }
                 else
-                    return StatusCode(200, new { success = false, message = "El mensaje no pudo ser editado." });
+                {
+                    return StatusCode(200, new { success = false, message = "No se encontró ningún registro. Espere a que los clientes registren mensajes durante el transcurso de la semana." });
+                }
             }
             catch (Exception)
             {
-                return StatusCode(500, new { success = false, error = true, message = "Error al editar el mensaje." });
+                return StatusCode(500, new { success = false, error = true, message = "Error al obtener los registros." });
             }
             finally
             {
