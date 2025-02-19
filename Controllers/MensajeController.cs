@@ -110,7 +110,7 @@ namespace ejemplov1.Controllers
                 }
                 else
                 {
-                    return StatusCode(200, new { success = false, message = "No se encontró ningún registro." });
+                    return StatusCode(200, new { success = false, message = "No se encontró ningún registro, espere a que los clientes empiecen a registrar mensajes" });
                 }
             }
             catch (Exception)

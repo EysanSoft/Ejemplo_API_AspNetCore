@@ -1,4 +1,5 @@
-﻿using ejemplov1.Models;
+﻿using ejemplo_api.Models.DTOs.Usuario;
+using ejemplov1.Models;
 using ejemplov1.Models.DTOs.Usuario;
 using ejemplov1.Resources;
 using Microsoft.AspNetCore.Authorization;
@@ -160,6 +161,41 @@ namespace ejemplov1.Controllers
             catch (Exception)
             {
                 return StatusCode(500, new { success = false, error = true, message = "Error al actualizar los datos del usuario." });
+            }
+            finally
+            {
+                connection.Close();
+                connection.Dispose();
+            }
+        }
+
+        // UPDATE.
+        [HttpPut, Route("actualizar_contrasena/{id}"), Authorize]
+        public ActionResult UpdatePass (ActualizarContrasenaDto usuario, int id)
+        {
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(usuario.Contrasena);
+            string storedProcedure = "ActualizarContrasena";
+
+            SqlConnection connection = new SqlConnection(Connection.GetConnection());
+            try
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand(storedProcedure, connection);
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Parameters.Add("@user", SqlDbType.Int);
+                command.Parameters["@user"].Value = id;
+                command.Parameters.Add("@password", SqlDbType.NVarChar);
+                command.Parameters["@password"].Value = hashedPassword;
+                int result = command.ExecuteNonQuery();
+
+                if (result > 0)
+                    return StatusCode(200, new { success = true, message = "La contraseña ha sido actualizada." });
+                else
+                    return StatusCode(200, new { success = false, message = "La contraseña no fue actualizada" });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { success = false, error = true, message = "Error al actualizar la contraseña." });
             }
             finally
             {
