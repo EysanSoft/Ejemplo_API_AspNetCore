@@ -36,6 +36,12 @@ namespace ejemplov1.Controllers
                 command.Parameters["@phone"].Value = usuario.Telefono;
                 command.Parameters.Add("@password", SqlDbType.NVarChar);
                 command.Parameters["@password"].Value = hashedPassword;
+                command.Parameters.Add("@roleId", SqlDbType.Int);
+                command.Parameters["@roleId"].Value = usuario.RolId;
+                command.Parameters.Add("@crear", SqlDbType.Bit);
+                command.Parameters["@crear"].Value = usuario.Crear;
+                command.Parameters.Add("@eliminar", SqlDbType.Bit);
+                command.Parameters["@eliminar"].Value = usuario.Eliminar;
                 int result = command.ExecuteNonQuery();
 
                 if (result > 0)
@@ -147,10 +153,14 @@ namespace ejemplov1.Controllers
                 command.Parameters["@name"].Value = usuario.Nombre;
                 command.Parameters.Add("@lastName", SqlDbType.NVarChar);
                 command.Parameters["@lastName"].Value = usuario.Apellidos;
-                command.Parameters.Add("@email", SqlDbType.NVarChar);
-                command.Parameters["@email"].Value = usuario.Correo;
                 command.Parameters.Add("@phone", SqlDbType.NVarChar);
                 command.Parameters["@phone"].Value = usuario.Telefono;
+                command.Parameters.Add("@email", SqlDbType.NVarChar);
+                command.Parameters["@email"].Value = usuario.Correo;
+                command.Parameters.Add("@crear", SqlDbType.Bit);
+                command.Parameters["@crear"].Value = usuario.Crear;
+                command.Parameters.Add("@eliminar", SqlDbType.Bit);
+                command.Parameters["@eliminar"].Value = usuario.Eliminar;
                 int result = command.ExecuteNonQuery();
 
                 if (result > 0)

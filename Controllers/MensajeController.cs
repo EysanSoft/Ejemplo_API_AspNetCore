@@ -34,6 +34,8 @@ namespace ejemplov1.Controllers
                 command.Parameters["@status"].Value = mensaje.Status;
                 command.Parameters.Add("@clienteId", SqlDbType.Int);
                 command.Parameters["@clienteId"].Value = mensaje.ClienteId;
+                command.Parameters.Add("@usuarioId", SqlDbType.Int);
+                command.Parameters["@usuarioId"].Value = mensaje.UsuarioId;
                 int result = command.ExecuteNonQuery();
 
                 if (result > 0)
@@ -63,6 +65,45 @@ namespace ejemplov1.Controllers
                 connection.Open();
                 SqlCommand command = new SqlCommand(storedProcedure, connection);
                 command.CommandType = System.Data.CommandType.StoredProcedure;
+                DataTable data = new DataTable();
+                SqlDataAdapter adapter = new SqlDataAdapter(command);
+                adapter.Fill(data);
+
+                if (data.Rows.Count > 0)
+                {
+                    var mensajes = JsonConvert.SerializeObject(data);
+                    return StatusCode(200, new { success = true, data = JsonConvert.DeserializeObject<List<Mensaje>>(mensajes) });
+                }
+                else
+                {
+                    return StatusCode(200, new { success = false, message = "No se encontró ningún mensaje." });
+                }
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { success = false, error = true, message = "Error al obtener los mensajes." });
+            }
+            finally
+            {
+                connection.Close();
+                connection.Dispose();
+            }
+        }
+
+        // READ.
+        [HttpGet, Route("obtener_mensajes/{id}"), Authorize]
+        public ActionResult Read(int id)
+        {
+            string storedProcedure = "ObtenerMensajesPropios";
+
+            SqlConnection connection = new SqlConnection(Connection.GetConnection());
+            try
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand(storedProcedure, connection);
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Parameters.Add("@userId", SqlDbType.Int);
+                command.Parameters["@userId"].Value = id;
                 DataTable data = new DataTable();
                 SqlDataAdapter adapter = new SqlDataAdapter(command);
                 adapter.Fill(data);

@@ -8,6 +8,7 @@
         public string Tipo { get; set; }
         public string Status { get; set; }
         public int ClienteId { get; set; }
+        public int UsuarioId { get; set; }
         public DateTime Creado { get; set; }
     }
 }

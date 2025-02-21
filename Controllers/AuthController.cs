@@ -24,6 +24,7 @@ namespace ejemplo_api.Controllers
         public ActionResult Login(AuthUsuarioDto usuario)
         {
             string correo = usuario.Correo;
+            // La contraseña no pasa por el procedimiento almacenado, se utiliza para comparar la contraseña encriptada como respuesta.
             string contrasena = usuario.Contrasena;
             string storedProcedure = "ObtenerUsuarioXCorreo";
 
@@ -42,7 +43,7 @@ namespace ejemplo_api.Controllers
                 if (data.Rows.Count > 0)
                 {
                     int id = Convert.ToInt32(data.Rows[0]["Id"].ToString());
-                    string nombreUsuario = data.Rows[0]["Nombre"].ToString();
+                    int rolId = Convert.ToInt32(data.Rows[0]["RolId"].ToString());
                     string contraHash = data.Rows[0]["Contrasena"].ToString();
                     bool valid = BCrypt.Net.BCrypt.Verify(contrasena, contraHash);
 
@@ -55,6 +56,7 @@ namespace ejemplo_api.Controllers
                             new Claim(JwtRegisteredClaimNames.Sub, jwt.Subject),
                             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                             new Claim(JwtRegisteredClaimNames.Iat, date),
+                            // Hay que obtener el Id desde el token.
                             new Claim("usuario", id.ToString())
                         };
                         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
@@ -66,11 +68,12 @@ namespace ejemplo_api.Controllers
                             expires: DateTime.Now.AddHours(1),
                             signingCredentials: signing
                         );
-
+                        // Regresar el rol.
                         return StatusCode(200, new
                         {
                             success = true,
                             user = id,
+                            role = rolId,
                             token = new JwtSecurityTokenHandler().WriteToken(token)
                         });
                     }
