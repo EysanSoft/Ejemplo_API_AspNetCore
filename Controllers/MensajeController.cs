@@ -56,7 +56,7 @@ namespace ejemplov1.Controllers
 
         // READ.
         [HttpGet, Route("obtener_mensajes"), Authorize]
-        public ActionResult Read()
+        public ActionResult Read(RangoEntreFechas fecha)
         {
             string storedProcedure = "ObtenerMensajes";
             SqlConnection connection = new SqlConnection(Connection.GetConnection());
@@ -65,6 +65,10 @@ namespace ejemplov1.Controllers
                 connection.Open();
                 SqlCommand command = new SqlCommand(storedProcedure, connection);
                 command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Parameters.Add("@fechaInicial", SqlDbType.NVarChar);
+                command.Parameters["@fechaInicial"].Value = fecha.Inicial;
+                command.Parameters.Add("@fechaFinal", SqlDbType.NVarChar);
+                command.Parameters["@fechaFinal"].Value = fecha.Final;
                 DataTable data = new DataTable();
                 SqlDataAdapter adapter = new SqlDataAdapter(command);
                 adapter.Fill(data);
@@ -92,7 +96,7 @@ namespace ejemplov1.Controllers
 
         // READ.
         [HttpGet, Route("obtener_mensajes/{id}"), Authorize]
-        public ActionResult Read(int id)
+        public ActionResult Read(int id, RangoEntreFechas fecha)
         {
             string storedProcedure = "ObtenerMensajesPropios";
 
@@ -102,6 +106,10 @@ namespace ejemplov1.Controllers
                 connection.Open();
                 SqlCommand command = new SqlCommand(storedProcedure, connection);
                 command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Parameters.Add("@fechaInicial", SqlDbType.NVarChar);
+                command.Parameters["@fechaInicial"].Value = fecha.Inicial;
+                command.Parameters.Add("@fechaFinal", SqlDbType.NVarChar);
+                command.Parameters["@fechaFinal"].Value = fecha.Final;
                 command.Parameters.Add("@userId", SqlDbType.Int);
                 command.Parameters["@userId"].Value = id;
                 DataTable data = new DataTable();

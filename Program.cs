@@ -41,3 +41,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+// ngrok http https://localhost:7078/ --host-header=rewrite
