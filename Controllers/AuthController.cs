@@ -138,7 +138,7 @@ namespace ejemplo_api.Controllers
                         jwt.Issuer,
                         jwt.Audience,
                         claims,
-                        expires: DateTime.Now.AddMinutes(10),
+                        expires: DateTime.Now.AddMinutes(5),
                         signingCredentials: signing
                     );
                     return StatusCode(200, new

@@ -135,6 +135,45 @@ namespace ejemplov1.Controllers
             }
         }
 
+        // READ.
+        [HttpGet, Route("obtener_foto_de_perfil/{id}"), Authorize]
+        public ActionResult ReadPP(int id)
+        {
+            string storedProcedure = "ObtenerFotoDePerfil";
+
+            SqlConnection connection = new SqlConnection(Connection.GetConnection());
+            try
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand(storedProcedure, connection);
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Parameters.Add("@userId", SqlDbType.Int);
+                command.Parameters["@userId"].Value = id;
+                DataTable data = new DataTable();
+                SqlDataAdapter adapter = new SqlDataAdapter(command);
+                adapter.Fill(data);
+
+                if (data.Rows.Count > 0)
+                {
+                    var usuario = JsonConvert.SerializeObject(data);
+                    return StatusCode(200, new { success = true, data = JsonConvert.DeserializeObject<List<ObtenerFotoDePerfilDto>>(usuario) });
+                }
+                else
+                {
+                    return StatusCode(200, new { success = false, message = "No se encontró ninguna foto de perfil..." });
+                }
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { success = false, error = true, message = "Error al obtener la foto de perfil..." });
+            }
+            finally
+            {
+                connection.Close();
+                connection.Dispose();
+            }
+        }
+
         // UPDATE.
         [HttpPut, Route("actualizar_usuario/{id}"), Authorize]
         public ActionResult Update (ActualizarUsuarioDto usuario, int id)
@@ -170,7 +209,8 @@ namespace ejemplov1.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, new { success = false, error = true, message = "Error al actualizar los datos del usuario." });
+                connection.RetrieveInternalInfo();
+                return StatusCode(500, new { success = false, error = true, message = "Error al actualizar los datos del usuario."});
             }
             finally
             {
