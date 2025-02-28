@@ -254,6 +254,40 @@ namespace ejemplov1.Controllers
             }
         }
 
+        // UPDATE.
+        [HttpPut, Route("actualizar_foto_de_perfil/{id}"), Authorize]
+        public ActionResult UpdatePP(ActualizarFotoDePerfilDto usuario, int id)
+        {
+            string storedProcedure = "ActualizarFotoDePerfil";
+
+            SqlConnection connection = new SqlConnection(Connection.GetConnection());
+            try
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand(storedProcedure, connection);
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Parameters.Add("@id", SqlDbType.Int);
+                command.Parameters["@id"].Value = id;
+                command.Parameters.Add("@imageUrl", SqlDbType.NVarChar);
+                command.Parameters["@imageUrl"].Value = usuario.ImageUrl;
+                int result = command.ExecuteNonQuery();
+
+                if (result > 0)
+                    return StatusCode(200, new { success = true, message = "La foto de perfil ha sido actualizada." });
+                else
+                    return StatusCode(200, new { success = false, message = "La foto de perfil no fue actualizada" });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { success = false, error = true, message = "Error al actualizar la foto de perfil." });
+            }
+            finally
+            {
+                connection.Close();
+                connection.Dispose();
+            }
+        }
+
         // DELETE.
         [HttpDelete, Route("eliminar_usuario/{id}"), Authorize]
         public ActionResult Delete (int id)
